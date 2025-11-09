@@ -1,0 +1,127 @@
+# 🧠 SmartMind
+
+智能思维导图是一款离线可用的 Web 应用，用结构化脑图的方式与大模型对话。每一次提问与回答都会落地成节点，帮助你沉淀思考过程、组织知识，并随时导出备份。
+
+---
+
+## 功能特性
+
+- 画布节点：拖拽、增删、层级调整与自动布局，问题和回答一目了然
+- AI 互联：内置 Echo / HTTP / Docker Model Runner / OpenAI 四类客户端，可按需切换
+- 离线持久化：Pinia + IndexedDB 自动保存，断网也能继续编辑
+- 历史留存：后端 JSON 日志记录所有问答，方便审计与恢复
+- 快速导出：一键导出当前脑图 JSON，便于迁移或备份
+
+---
+
+## 技术 & 目录
+
+| 模块 | 技术栈 |
+| --- | --- |
+| 前端 | Vue 3 + Vite · Pinia · Konva.js · LocalForage |
+| 后端 | FastAPI · httpx · Pydantic Settings |
+
+```
+smartmind/
+├── frontend/        # Vue 应用
+├── backend/         # FastAPI 服务
+├── start.sh         # 一键启动脚本（可选）
+└── stop.sh
+```
+
+---
+
+## 架构快照
+
+```
+[Vue 3 Canvas UI] --Axios--> [/ask · FastAPI] --AIClient-->
+  (Pinia State + IndexedDB)      (echo/http/docker/openai) --> 模型
+```
+
+---
+
+## 快速开始
+
+> 开始前请安装 Node.js ≥ 18 与 Python ≥ 3.10。
+
+### 1. 首次安装依赖（只需执行一次）
+
+```bash
+# 前端依赖
+cd frontend
+npm install
+
+# 后端依赖
+cd ../backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2. 启动 / 停止服务
+
+完成依赖安装后，可在仓库根目录使用脚本一键起停：
+
+```bash
+./start.sh   # 同时启动前后端（5173 / 8000）
+./stop.sh    # 安全关闭，并清理 PID / 日志标记
+```
+
+如果需要单独运行，可依旧进入各子目录执行 `npm run dev` 或 `uvicorn main:app --reload`。项目默认把 `/api` 代理到 `http://localhost:8000`，后端会在 `backend/data/history.json` 中自动写入问答日志。
+
+---
+
+## 模型接入
+
+| provider | 适用场景 | 关键字段 |
+| --- | --- | --- |
+| `echo` | 本地演示，无真实推理 | 无 |
+| `http` | 自建 HTTP 服务 / Ollama / LM Studio | `base_url`，`headers`（可选） |
+| `docker` | [Docker Model Runner](https://github.com/modelscope/modelscope/blob/master/modelscope/tools/model_runner/README.md) | `base_url`（指向 `/engines/{engine}/v1/chat/completions`），`model` |
+| `openai` | OpenAI 或兼容 API（Azure、OpenRouter 等） | `api_key`，`model`，`base_url`（可选） |
+
+示例配置（`backend/config.toml`，可被根目录配置或环境变量覆盖）：
+
+```toml
+[ai]
+provider = "docker"
+base_url = "http://localhost:12434/engines/llama.cpp/v1/chat/completions"
+model = "ai/gemma3"
+```
+
+启动 Docker Model Runner 后，可先使用：
+
+```bash
+curl http://localhost:12434/engines/llama.cpp/v1/chat/completions \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"model":"ai/gemma3","messages":[{"role":"user","content":"你好，介绍一下你自己"}]}'
+```
+
+若需要临时覆盖配置，可在启动 FastAPI 前导出环境变量：
+
+```bash
+export SMARTMIND_PROVIDER=docker
+export SMARTMIND_BASE_URL=http://localhost:12434/engines/llama.cpp/v1/chat/completions
+export SMARTMIND_MODEL=ai/gemma3
+```
+
+---
+
+## 开发提示
+
+- `backend/config.toml` 仅作默认值；在仓库根目录放置 `config.toml` 可覆盖全部后端实例
+- `frontend/src/utils/db.ts` 负责 IndexedDB 读写，如需更换持久化策略可从此处入手
+- `backend/services/ai_client.py` 统一处理模型请求与问答日志，新增 provider 也在此扩展
+- 提交 PR 前建议运行 `npm run build`（前端）与 `pytest` / `ruff`（若已配置）确保质量
+
+---
+
+## 路线图
+
+- [ ] 节点多选与批量操作
+- [ ] 会话上下文模式
+- [ ] PWA 打包与桌面安装
+- [ ] AI 生成子节点推荐
+
+欢迎 Issue / PR，一起把 SmartMind 打磨成更好用的 AI 笔记工具。🎉
