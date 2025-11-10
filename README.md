@@ -83,6 +83,27 @@ pip install -r requirements.txt
 
 示例配置（直接编辑 `backend/config.toml`，或使用环境变量覆盖）：
 
+**Echo（内置回声）**
+
+```toml
+[ai]
+provider = "echo"
+```
+
+**HTTP（Ollama / LM Studio 等自建接口）**
+
+```toml
+[ai]
+provider = "http"
+base_url = "http://localhost:11434/api/generate"
+timeout = 60
+
+[ai.headers]
+Authorization = "Bearer custom-token"
+```
+
+**Docker Model Runner**
+
 ```toml
 [ai]
 provider = "docker"
@@ -106,6 +127,31 @@ curl http://localhost:12434/engines/llama.cpp/v1/chat/completions \
 export SMARTMIND_PROVIDER=docker
 export SMARTMIND_BASE_URL=http://localhost:12434/engines/llama.cpp/v1/chat/completions
 export SMARTMIND_MODEL=ai/gemma3
+```
+
+**OpenAI / 兼容服务（默认走 `/v1/responses`，如需旧版可把 base_url 改为 `/v1/chat/completions`）**
+
+```toml
+[ai]
+provider = "openai"
+api_key = "sk-***"
+model = "gpt-5-nano"
+base_url = "https://api.openai.com/v1/responses"  # 可选
+timeout = 60
+```
+
+OpenAI Python 客户端示例（与后台实现保持一致）：
+
+```python
+from openai import OpenAI
+
+client = OpenAI()
+response = client.responses.create(
+    model="gpt-5-nano",
+    input="Write a one-sentence bedtime story about a unicorn."
+)
+
+print(response.output_text)
 ```
 
 ---

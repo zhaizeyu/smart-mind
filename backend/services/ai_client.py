@@ -82,24 +82,61 @@ class AIClient:
         api_key = self.settings.api_key or ""
         if not api_key:
             raise ValueError("OpenAI 模式需要配置 api_key")
-        base_url = self.settings.base_url or "https://api.openai.com/v1/chat/completions"
-        logger.debug("Calling OpenAI endpoint %s model=%s", base_url, self.settings.model)
-        payload = {
-            "model": self.settings.model,
-            "messages": [{"role": "user", "content": question}],
-        }
+        base_url = (self.settings.base_url or "https://api.openai.com/v1/responses").rstrip("/")
+        use_chat_api = "chat/completions" in base_url
+        logger.debug("Calling OpenAI endpoint %s model=%s use_chat=%s", base_url, self.settings.model, use_chat_api)
+        if use_chat_api:
+            payload: Dict[str, Any] = {
+                "model": self.settings.model,
+                "messages": [{"role": "user", "content": question}],
+            }
+        else:
+            payload = {
+                "model": self.settings.model,
+                "input": question,
+            }
         headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json", **(self.settings.headers or {})}
         async with httpx.AsyncClient(timeout=self.settings.timeout) as client:
             response = await client.post(base_url, json=payload, headers=headers)
             response.raise_for_status()
             data = response.json()
-            choices = data.get("choices") or []
-            if not choices:
-                raise ValueError("OpenAI 接口未返回 choices")
-            answer = choices[0]["message"]["content"]
+            answer = self._extract_openai_answer(data, prefer_chat=use_chat_api)
             self._persist(question, answer)
             logger.info("OpenAI provider answered successfully")
             return answer
+
+    @staticmethod
+    def _extract_openai_answer(data: Dict[str, Any], *, prefer_chat: bool = False) -> str:
+        if not prefer_chat:
+            output = data.get("output") or data.get("response", {}).get("output")
+            if isinstance(output, list):
+                for block in output:
+                    contents = block.get("content")
+                    if isinstance(contents, list):
+                        for item in contents:
+                            if item.get("type") in {"output_text", "text"}:
+                                text = item.get("text") or item.get("data")
+                                if text:
+                                    return text
+                    text = block.get("text")
+                    if text:
+                        return text
+            if isinstance(data.get("output_text"), list):
+                joined = "".join(data.get("output_text", []))
+                if joined:
+                    return joined
+        choices = data.get("choices")
+        if isinstance(choices, list) and choices:
+            message = choices[0].get("message") or {}
+            content = message.get("content")
+            if isinstance(content, list):
+                fragments = [part.get("text", "") for part in content if isinstance(part, dict)]
+                text = "".join(fragments).strip()
+                if text:
+                    return text
+            if isinstance(content, str):
+                return content
+        raise ValueError("无法解析 OpenAI 返回结果")
 
     async def _request_docker_runner(self, question: str) -> str:
         base_url = self.settings.base_url or "http://localhost:12434/engines/llama.cpp/v1/chat/completions"

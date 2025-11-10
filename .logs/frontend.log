@@ -184,3 +184,48 @@ DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be
 
 More info: https://sass-lang.com/d/legacy-js-api
 
+-e 
+===== 2025-11-10 08:28:36 =====
+
+> smartmind-frontend@0.1.0 dev
+> vite --host
+
+
+  VITE v5.4.21  ready in 143 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.0.10:5173/
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+-e 
+===== 2025-11-10 08:29:11 =====
+
+> smartmind-frontend@0.1.0 dev
+> vite --host
+
+
+  VITE v5.4.21  ready in 109 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.0.10:5173/
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+-e 
+===== 2025-11-10 08:33:45 =====
+
+> smartmind-frontend@0.1.0 dev
+> vite --host
+
+
+  VITE v5.4.21  ready in 112 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.0.10:5173/
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+

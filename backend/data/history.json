@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "question": "1+1=",
+    "answer": "(本地回声模式) 您的问题是：1+1=\n编辑 backend/config.toml 并设置 provider/base_url 以连接真实模型。\n远程调用失败：Client error '400 Bad Request' for url 'https://api.openai.com/v1/responses'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+    "timestamp": "2025-11-10T07:28:44.523837Z"
+  },
+  {
+    "question": "1+1=",
+    "answer": "(本地回声模式) 您的问题是：1+1=\n编辑 backend/config.toml 并设置 provider/base_url 以连接真实模型。\n远程调用失败：Client error '400 Bad Request' for url 'https://api.openai.com/v1/responses'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+    "timestamp": "2025-11-10T07:29:13.696175Z"
+  },
+  {
+    "question": "1+1=",
+    "answer": "2",
+    "timestamp": "2025-11-10T07:33:50.008069Z"
+  }
+]
