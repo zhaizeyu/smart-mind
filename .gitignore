@@ -2,4 +2,3 @@ node_modules/
 frontend/dist/
 backend/.venv/
 backend/__pycache__/
-config.toml

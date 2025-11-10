@@ -1,0 +1,9 @@
+[ai]
+provider = "docker"
+base_url = "http://localhost:12434/engines/llama.cpp/v1/chat/completions"
+model = "ai/gemma3"
+timeout = 60
+
+[ai.headers]
+# 可在此追加自定义请求头，比如：
+# Authorization = "Bearer xxx"
