@@ -5,15 +5,19 @@ import type { MindNode } from '../types/mind';
 const props = defineProps<{
   node: MindNode;
   loading?: boolean;
+  summarizing?: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: 'update:question', value: string): void;
+  (e: 'update:answer', value: string): void;
   (e: 'ask'): void;
+  (e: 'summarize'): void;
   (e: 'delete'): void;
 }>();
 
 const draftQuestion = ref(props.node.question);
+const draftAnswer = ref(props.node.answer ?? '');
 
 watch(
   () => props.node.question,
@@ -22,12 +26,26 @@ watch(
   }
 );
 
-const disableActions = computed(() => props.loading || !draftQuestion.value.trim());
+watch(
+  () => props.node.answer,
+  newVal => {
+    draftAnswer.value = newVal ?? '';
+  }
+);
+
+const disableAsk = computed(() => props.loading || props.summarizing || !draftQuestion.value.trim());
+const disableSummarize = computed(() => props.loading || props.summarizing);
+const disableSaveAnswer = computed(() => props.loading || props.summarizing || draftAnswer.value === (props.node.answer ?? ''));
 
 function handleSubmit() {
-  if (disableActions.value) return;
+  if (disableAsk.value) return;
   emit('update:question', draftQuestion.value.trim());
   emit('ask');
+}
+
+function handleSaveAnswer() {
+  if (disableSaveAnswer.value) return;
+  emit('update:answer', draftAnswer.value);
 }
 </script>
 
@@ -44,17 +62,26 @@ function handleSubmit() {
     </label>
 
     <div class="actions">
-      <button type="button" :disabled="disableActions" @click="handleSubmit">
+      <button type="button" :disabled="disableAsk" @click="handleSubmit">
         {{ loading ? '提问中...' : '向 AI 提问' }}
+      </button>
+      <button class="secondary" type="button" :disabled="disableSummarize" @click="emit('summarize')">
+        {{ summarizing ? '汇总中...' : '节点汇总' }}
       </button>
     </div>
 
     <label>
       回答
-      <article v-if="node.answer" class="answer">
-        {{ node.answer }}
-      </article>
-      <p v-else class="placeholder">等待 AI 返回回答...</p>
+      <textarea
+        v-model="draftAnswer"
+        rows="8"
+        placeholder="可手动编辑回答内容，或等待 AI 返回结果"
+      ></textarea>
+      <div class="actions">
+        <button class="secondary" type="button" :disabled="disableSaveAnswer" @click="handleSaveAnswer">
+          保存答案
+        </button>
+      </div>
     </label>
   </section>
 </template>
@@ -101,6 +128,7 @@ textarea {
 
 .actions {
   display: flex;
+  gap: 0.5rem;
   justify-content: flex-end;
 }
 
@@ -123,6 +151,12 @@ button.danger {
   background: transparent;
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+button.secondary {
+  background: transparent;
+  color: #0ea5e9;
+  border: 1px solid rgba(14, 165, 233, 0.4);
 }
 
 .answer {

@@ -1,0 +1,430 @@
+[INFO] 2025-11-09 21:19:09,386 smartmind.ask: Received question len=6
+[INFO] 2025-11-09 21:19:09,386 services.ai_client: Dispatch question to provider=docker
+[ERROR] 2025-11-09 21:19:39,398 services.ai_client: Provider docker failed: 
+Traceback (most recent call last):
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 69, in map_httpcore_exceptions
+    yield
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 136, in handle_async_request
+    raise exc
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.READ_NUM_BYTES, timeout=timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_backends/anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 55, in ask
+    return await self._request_docker_runner(question)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 113, in _request_docker_runner
+    response = await client.post(base_url, json=payload, headers=headers)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1892, in post
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<13 lines>...
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1574, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1661, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1689, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1726, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1763, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 372, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 86, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+[WARNING] 2025-11-09 21:19:39,402 services.ai_client: Fallback echo mode triggered without remote provider
+[INFO] 2025-11-09 21:19:39,403 smartmind.ask: Completed question
+INFO:     127.0.0.1:52196 - "POST /ask HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[INFO] 2025-11-09 21:34:26,532 smartmind.api: SmartMind API stopping
+INFO:     Application shutdown complete.
+INFO:     Finished server process [16336]
+INFO:     Stopping reloader process [16320]
+-e 
+===== 2025-11-09 21:34:27 =====
+INFO:     Will watch for changes in these directories: ['/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [17424] using WatchFiles
+INFO:     Started server process [17440]
+INFO:     Waiting for application startup.
+[INFO] 2025-11-09 21:34:28,072 smartmind.api: SmartMind API starting with routers: ['/openapi.json', '/docs', '/docs/oauth2-redirect', '/redoc', '/ask', '/summary', '/health']
+INFO:     Application startup complete.
+[INFO] 2025-11-09 21:35:16,082 smartmind.ask: Received question len=8
+[INFO] 2025-11-09 21:35:16,082 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:35:20,740 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:35:20,743 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:35:20,744 smartmind.ask: Completed question
+INFO:     127.0.0.1:52240 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:35:43,393 smartmind.ask: Received question len=8
+[INFO] 2025-11-09 21:35:43,393 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:35:44,393 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:35:44,395 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:35:44,395 smartmind.ask: Completed question
+INFO:     127.0.0.1:52247 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:35:46,464 smartmind.ask: Received question len=8
+[INFO] 2025-11-09 21:35:46,464 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:35:47,719 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:35:47,721 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:35:47,721 smartmind.ask: Completed question
+INFO:     127.0.0.1:52252 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:35:54,481 smartmind.ask: Received question len=6
+[INFO] 2025-11-09 21:35:54,481 services.ai_client: Dispatch question to provider=docker
+[ERROR] 2025-11-09 21:36:24,498 services.ai_client: Provider docker failed: 
+Traceback (most recent call last):
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 69, in map_httpcore_exceptions
+    yield
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 136, in handle_async_request
+    raise exc
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.READ_NUM_BYTES, timeout=timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_backends/anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 55, in ask
+    return await self._request_docker_runner(question)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 113, in _request_docker_runner
+    response = await client.post(base_url, json=payload, headers=headers)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1892, in post
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<13 lines>...
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1574, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1661, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1689, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1726, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1763, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 372, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 86, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+[WARNING] 2025-11-09 21:36:24,506 services.ai_client: Fallback echo mode triggered without remote provider
+[INFO] 2025-11-09 21:36:24,507 smartmind.ask: Completed question
+INFO:     127.0.0.1:52257 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:36:32,026 smartmind.ask: Received question len=8
+[INFO] 2025-11-09 21:36:32,026 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:36:33,305 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:36:33,307 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:36:33,307 smartmind.ask: Completed question
+INFO:     127.0.0.1:52262 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:38:40,331 smartmind.ask: Received question len=6
+[INFO] 2025-11-09 21:38:40,331 services.ai_client: Dispatch question to provider=docker
+[ERROR] 2025-11-09 21:39:10,343 services.ai_client: Provider docker failed: 
+Traceback (most recent call last):
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 69, in map_httpcore_exceptions
+    yield
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 136, in handle_async_request
+    raise exc
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.READ_NUM_BYTES, timeout=timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_backends/anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 55, in ask
+    return await self._request_docker_runner(question)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 113, in _request_docker_runner
+    response = await client.post(base_url, json=payload, headers=headers)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1892, in post
+    return await self.request(
+           ^^^^^^^^^^^^^^^^^^^
+    ...<13 lines>...
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1574, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1661, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1689, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1726, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_client.py", line 1763, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 372, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.7/Frameworks/Python.framework/Versions/3.13/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 86, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+[WARNING] 2025-11-09 21:39:10,347 services.ai_client: Fallback echo mode triggered without remote provider
+[INFO] 2025-11-09 21:39:10,348 smartmind.ask: Completed question
+INFO:     127.0.0.1:52268 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:40:20,288 smartmind.ask: Received question len=8
+[INFO] 2025-11-09 21:40:20,288 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:40:21,610 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:40:21,611 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:40:21,612 smartmind.ask: Completed question
+INFO:     127.0.0.1:52279 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:46:50,377 smartmind.ask: Received question len=10
+[INFO] 2025-11-09 21:46:50,378 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:46:53,494 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:46:53,497 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:46:53,497 smartmind.ask: Completed question
+INFO:     127.0.0.1:52308 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:49:02,120 smartmind.ask: Received question len=6
+[INFO] 2025-11-09 21:49:02,121 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:49:39,871 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:49:39,874 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:49:39,874 smartmind.ask: Completed question
+INFO:     127.0.0.1:52335 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:52:51,437 smartmind.ask: Received question len=8
+[INFO] 2025-11-09 21:52:51,438 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:53:25,036 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:53:25,039 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:53:25,039 smartmind.ask: Completed question
+INFO:     127.0.0.1:52348 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:54:06,005 smartmind.ask: Received question len=8
+[INFO] 2025-11-09 21:54:06,007 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:54:40,686 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:54:40,692 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:54:40,693 smartmind.ask: Completed question
+INFO:     127.0.0.1:52357 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:54:46,703 smartmind.summary: Summarizing topic='如何学习AI' entries=3
+[INFO] 2025-11-09 21:54:46,704 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:55:08,001 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:55:08,005 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:55:08,005 smartmind.summary: Summary generated for topic='如何学习AI'
+INFO:     127.0.0.1:52365 - "POST /summary HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:55:31,339 smartmind.summary: Summarizing topic='如何学习AI' entries=3
+[INFO] 2025-11-09 21:55:31,340 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:55:32,540 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 500 Internal Server Error"
+[ERROR] 2025-11-09 21:55:32,542 services.ai_client: Provider docker failed: Server error '500 Internal Server Error' for url 'http://localhost:12434/engines/llama.cpp/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+Traceback (most recent call last):
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 55, in ask
+    return await self._request_docker_runner(question)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 114, in _request_docker_runner
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_models.py", line 761, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '500 Internal Server Error' for url 'http://localhost:12434/engines/llama.cpp/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+[ERROR] 2025-11-09 21:55:32,548 services.ai_client: Fallback echo due to error: Server error '500 Internal Server Error' for url 'http://localhost:12434/engines/llama.cpp/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+[INFO] 2025-11-09 21:55:32,552 smartmind.summary: Summary generated for topic='如何学习AI'
+INFO:     127.0.0.1:52371 - "POST /summary HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:56:17,152 smartmind.summary: Summarizing topic='如何学习AI' entries=3
+[INFO] 2025-11-09 21:56:17,153 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:56:19,282 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 400 Bad Request"
+[ERROR] 2025-11-09 21:56:19,284 services.ai_client: Provider docker failed: Client error '400 Bad Request' for url 'http://localhost:12434/engines/llama.cpp/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+Traceback (most recent call last):
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 55, in ask
+    return await self._request_docker_runner(question)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend/services/ai_client.py", line 114, in _request_docker_runner
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/zhaizeyu/Documents/vscode/local/siweidaotu/.venv/lib/python3.13/site-packages/httpx/_models.py", line 761, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '400 Bad Request' for url 'http://localhost:12434/engines/llama.cpp/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+[ERROR] 2025-11-09 21:56:19,285 services.ai_client: Fallback echo due to error: Client error '400 Bad Request' for url 'http://localhost:12434/engines/llama.cpp/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+[INFO] 2025-11-09 21:56:19,288 smartmind.summary: Summary generated for topic='如何学习AI'
+INFO:     127.0.0.1:52378 - "POST /summary HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:56:31,265 smartmind.ask: Received question len=6
+[INFO] 2025-11-09 21:56:31,266 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:57:14,487 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:57:14,493 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:57:14,493 smartmind.ask: Completed question
+INFO:     127.0.0.1:52384 - "POST /ask HTTP/1.1" 200 OK
+[INFO] 2025-11-09 21:58:02,951 smartmind.summary: Summarizing topic='如何学习AI' entries=3
+[INFO] 2025-11-09 21:58:02,951 services.ai_client: Dispatch question to provider=docker
+[INFO] 2025-11-09 21:58:23,296 httpx: HTTP Request: POST http://localhost:12434/engines/llama.cpp/v1/chat/completions "HTTP/1.1 200 OK"
+[INFO] 2025-11-09 21:58:23,301 services.ai_client: Docker model runner answered successfully
+[INFO] 2025-11-09 21:58:23,301 smartmind.summary: Summary generated for topic='如何学习AI'
+INFO:     127.0.0.1:52389 - "POST /summary HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[INFO] 2025-11-09 21:59:21,632 smartmind.api: SmartMind API stopping
+INFO:     Application shutdown complete.
+INFO:     Finished server process [17440]
+INFO:     Stopping reloader process [17424]
+-e 
+===== 2025-11-09 21:59:23 =====
+INFO:     Will watch for changes in these directories: ['/Users/zhaizeyu/Documents/vscode/local/siweidaotu/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [19022] using WatchFiles
+INFO:     Started server process [19038]
+INFO:     Waiting for application startup.
+[INFO] 2025-11-09 21:59:23,465 smartmind.api: SmartMind API starting with routers: ['/openapi.json', '/docs', '/docs/oauth2-redirect', '/redoc', '/ask', '/summary', '/health']
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+[INFO] 2025-11-09 21:59:25,485 smartmind.api: SmartMind API stopping
+INFO:     Application shutdown complete.
+INFO:     Finished server process [19038]
+INFO:     Stopping reloader process [19022]

@@ -8,6 +8,7 @@
 
 - 画布节点：拖拽、增删、层级调整与自动布局，问题和回答一目了然
 - AI 互联：内置 Echo / HTTP / Docker Model Runner / OpenAI 四类客户端，可按需切换
+- 节点汇总：一键收集当前节点及子节点的问答，压缩总结后写回当前节点
 - 离线持久化：Pinia + IndexedDB 自动保存，断网也能继续编辑
 - 历史留存：后端 JSON 日志记录所有问答，方便审计与恢复
 - 快速导出：一键导出当前脑图 JSON，便于迁移或备份
@@ -77,16 +78,17 @@ pip install -r requirements.txt
 | --- | --- | --- |
 | `echo` | 本地演示，无真实推理 | 无 |
 | `http` | 自建 HTTP 服务 / Ollama / LM Studio | `base_url`，`headers`（可选） |
-| `docker` | [Docker Model Runner](https://github.com/modelscope/modelscope/blob/master/modelscope/tools/model_runner/README.md) | `base_url`（指向 `/engines/{engine}/v1/chat/completions`），`model` |
-| `openai` | OpenAI 或兼容 API（Azure、OpenRouter 等） | `api_key`，`model`，`base_url`（可选） |
+| `docker` | [Docker Model Runner](https://github.com/modelscope/modelscope/blob/master/modelscope/tools/model_runner/README.md) | `base_url`（指向 `/engines/{engine}/v1/chat/completions`），`model`，`timeout`（可选，单位秒） |
+| `openai` | OpenAI 或兼容 API（Azure、OpenRouter 等） | `api_key`，`model`，`base_url`（可选），`timeout`（可选） |
 
-示例配置（`backend/config.toml`，可被根目录配置或环境变量覆盖）：
+示例配置（直接编辑 `backend/config.toml`，或使用环境变量覆盖）：
 
 ```toml
 [ai]
 provider = "docker"
 base_url = "http://localhost:12434/engines/llama.cpp/v1/chat/completions"
 model = "ai/gemma3"
+timeout = 60  # 单位秒，可按模型加载速度自行调整
 ```
 
 启动 Docker Model Runner 后，可先使用：
@@ -110,9 +112,10 @@ export SMARTMIND_MODEL=ai/gemma3
 
 ## 开发提示
 
-- `backend/config.toml` 仅作默认值；在仓库根目录放置 `config.toml` 可覆盖全部后端实例
+- `backend/config.toml` 是唯一的默认配置文件，可直接修改或使用环境变量覆盖
 - `frontend/src/utils/db.ts` 负责 IndexedDB 读写，如需更换持久化策略可从此处入手
 - `backend/services/ai_client.py` 统一处理模型请求与问答日志，新增 provider 也在此扩展
+- `backend/routers/summary.py` 汇总节点内容并调用 AI 压缩，可用于自定义摘要策略
 - 提交 PR 前建议运行 `npm run build`（前端）与 `pytest` / `ruff`（若已配置）确保质量
 
 ---

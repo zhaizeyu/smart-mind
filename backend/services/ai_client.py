@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, Literal, Optional
 
 import httpx
+import logging
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -30,6 +31,9 @@ class AISettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="SMARTMIND_", extra="allow")
 
 
+logger = logging.getLogger(__name__)
+
+
 class AIClient:
     def __init__(self, settings: AISettings | None = None) -> None:
         config_overrides = load_ai_config()
@@ -41,6 +45,7 @@ class AIClient:
 
     async def ask(self, question: str) -> str:
         provider = self.settings.provider
+        logger.info("Dispatch question to provider=%s", provider)
         try:
             if provider == "http" and self.settings.base_url:
                 return await self._request_custom_http(question)
@@ -49,10 +54,14 @@ class AIClient:
             if provider == "docker":
                 return await self._request_docker_runner(question)
         except Exception as exc:  # noqa: BLE001
+            logger.exception("Provider %s failed: %s", provider, exc)
             return self._fallback(question, error=str(exc))
+        logger.warning("Unknown provider '%s', falling back to echo", provider)
         return self._fallback(question)
 
     async def _request_custom_http(self, question: str) -> str:
+        assert self.settings.base_url, "base_url must be configured for http provider"
+        logger.debug("Calling custom HTTP endpoint %s", self.settings.base_url)
         async with httpx.AsyncClient(timeout=self.settings.timeout) as client:
             response = await client.post(
                 self.settings.base_url,
@@ -65,6 +74,7 @@ class AIClient:
             if not answer:
                 raise ValueError("远程服务没有返回 answer / content 字段")
             self._persist(question, answer)
+            logger.info("Custom HTTP provider answered successfully")
             return answer
         raise ValueError("provider=http 需要配置 base_url")
 
@@ -73,6 +83,7 @@ class AIClient:
         if not api_key:
             raise ValueError("OpenAI 模式需要配置 api_key")
         base_url = self.settings.base_url or "https://api.openai.com/v1/chat/completions"
+        logger.debug("Calling OpenAI endpoint %s model=%s", base_url, self.settings.model)
         payload = {
             "model": self.settings.model,
             "messages": [{"role": "user", "content": question}],
@@ -87,10 +98,12 @@ class AIClient:
                 raise ValueError("OpenAI 接口未返回 choices")
             answer = choices[0]["message"]["content"]
             self._persist(question, answer)
+            logger.info("OpenAI provider answered successfully")
             return answer
 
     async def _request_docker_runner(self, question: str) -> str:
         base_url = self.settings.base_url or "http://localhost:12434/engines/llama.cpp/v1/chat/completions"
+        logger.debug("Calling docker runner %s model=%s", base_url, self.settings.model)
         payload = {
             "model": self.settings.model,
             "messages": [{"role": "user", "content": question}],
@@ -108,13 +121,18 @@ class AIClient:
             if not answer:
                 raise ValueError("Docker model runner choices 缺少 message.content")
             self._persist(question, answer)
+            logger.info("Docker model runner answered successfully")
             return answer
 
     def _fallback(self, question: str, error: str | None = None) -> str:
+        if error:
+            logger.error("Fallback echo due to error: %s", error)
+        else:
+            logger.warning("Fallback echo mode triggered without remote provider")
         answer = (
             "(本地回声模式) 您的问题是："
             f"{question}\n"
-            "复制 backend/config.example.toml 为 config.toml 并设置 provider/http 基础地址即可连接真实模型。"
+            "编辑 backend/config.toml 并设置 provider/base_url 以连接真实模型。"
         )
         if error:
             answer += f"\n远程调用失败：{error}"
@@ -134,6 +152,7 @@ class AIClient:
             payload = []
         payload.append(record)
         self.history_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        logger.debug("Persisted QA record, total=%s", len(payload))
 
 
 def get_ai_client() -> AIClient:

@@ -3,12 +3,13 @@ import { computed, onMounted, ref, watch } from 'vue';
 import MindMapCanvas from './components/MindMapCanvas.vue';
 import MindNode from './components/MindNode.vue';
 import { useMindStore } from './stores/useMindStore';
-import { askQuestion } from './utils/useAI';
+import { askQuestion, summarizeNode, type SummaryEntry } from './utils/useAI';
 import { clearMindMap, loadMindMap, saveMindMap } from './utils/db';
 import type { MindNode as MindNodeType } from './types/mind';
 
 const store = useMindStore();
 const isAsking = ref(false);
+const isSummarizing = ref(false);
 const toast = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 
@@ -45,6 +46,36 @@ async function handleAsk() {
     });
   } finally {
     isAsking.value = false;
+    setTimeout(() => (toast.value = null), 2000);
+  }
+}
+
+function collectSummaryEntries(node: MindNodeType, depth = 0, acc: SummaryEntry[] = []): SummaryEntry[] {
+  acc.push({
+    question: node.question,
+    answer: node.answer,
+    depth
+  });
+  node.children.forEach(child => collectSummaryEntries(child, depth + 1, acc));
+  return acc;
+}
+
+async function handleSummarize() {
+  const node = selectedNode.value;
+  if (!node) return;
+  isSummarizing.value = true;
+  try {
+    const entries = collectSummaryEntries(node);
+    const { summary } = await summarizeNode({
+      topic: node.question,
+      entries
+    });
+    store.updateNode(node.id, { answer: summary });
+    toast.value = '节点汇总完成';
+  } catch (error) {
+    toast.value = `节点汇总失败：${(error as Error).message}`;
+  } finally {
+    isSummarizing.value = false;
     setTimeout(() => (toast.value = null), 2000);
   }
 }
@@ -129,8 +160,11 @@ async function resetMindMap() {
         <MindNode
           :node="selectedNode"
           :loading="isAsking"
+          :summarizing="isSummarizing"
           @update:question="value => store.updateNode(selectedNode.id, { question: value })"
+          @update:answer="value => store.updateNode(selectedNode.id, { answer: value })"
           @ask="handleAsk"
+          @summarize="handleSummarize"
           @delete="() => store.removeNode(selectedNode.id)"
         />
       </section>
