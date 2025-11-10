@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 from services.ai_client import AIClient, get_ai_client
 
-logger = logging.getLogger("smartmind.summary")
+logger = logging.getLogger("mindflow.summary")
 router = APIRouter(prefix="/summary", tags=["summary"])
 
 

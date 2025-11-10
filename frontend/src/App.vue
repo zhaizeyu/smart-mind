@@ -99,7 +99,7 @@ function exportMindMap() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'smartmind.json';
+  link.download = 'mindflow.json';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -132,8 +132,8 @@ async function resetMindMap() {
   <div class="app-shell">
     <header class="hero">
       <div>
-        <p class="eyebrow">SmartMind</p>
-        <h1>智能思维导图</h1>
+        <p class="eyebrow">MindFlow</p>
+        <h1>MindFlow 智能思维导图</h1>
         <p>以节点组织问题，连接大模型，管理灵感。</p>
       </div>
       <div class="toolbar">

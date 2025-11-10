@@ -2,7 +2,7 @@ import localforage from 'localforage';
 import type { MindNode } from '../types/mind';
 
 const db = localforage.createInstance({
-  name: 'smartmind',
+  name: 'mindflow',
   storeName: 'mindmap'
 });
 

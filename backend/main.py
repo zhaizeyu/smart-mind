@@ -28,9 +28,9 @@ LOGGING_CONFIG = {
 }
 
 dictConfig(LOGGING_CONFIG)
-logger = logging.getLogger("smartmind.api")
+logger = logging.getLogger("mindflow.api")
 
-app = FastAPI(title="SmartMind API", version="0.1.0")
+app = FastAPI(title="MindFlow API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -45,12 +45,12 @@ app.include_router(summary.router)
 
 @app.on_event("startup")
 async def on_startup() -> None:
-    logger.info("SmartMind API starting with routers: %s", [route.path for route in app.routes])
+    logger.info("MindFlow API starting with routers: %s", [route.path for route in app.routes])
 
 
 @app.on_event("shutdown")
 async def on_shutdown() -> None:
-    logger.info("SmartMind API stopping")
+    logger.info("MindFlow API stopping")
 
 
 @app.get("/health")

@@ -28,7 +28,7 @@ class AISettings(BaseSettings):
     timeout: float = Field(default=30.0)
     history_path: Path = Field(default=Path(__file__).resolve().parents[1] / "data" / "history.json")
 
-    model_config = SettingsConfigDict(env_prefix="SMARTMIND_", extra="allow")
+    model_config = SettingsConfigDict(env_prefix="MINDFLOW_", extra="allow")
 
 
 logger = logging.getLogger(__name__)

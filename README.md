@@ -1,6 +1,6 @@
-# 🧠 SmartMind
+# 🧠 MindFlow
 
-智能思维导图是一款离线可用的 Web 应用，用结构化脑图的方式与大模型对话。每一次提问与回答都会落地成节点，帮助你沉淀思考过程、组织知识，并随时导出备份。
+MindFlow 是一款离线可用的 Web 应用，用结构化脑图的方式与大模型对话。每一次提问与回答都会落地成节点，帮助你沉淀思考过程、组织知识，并随时导出备份。
 
 ---
 
@@ -23,7 +23,7 @@
 | 后端 | FastAPI · httpx · Pydantic Settings |
 
 ```
-smartmind/
+mindflow/
 ├── frontend/        # Vue 应用
 ├── backend/         # FastAPI 服务
 ├── start.sh         # 一键启动脚本（可选）
@@ -124,9 +124,9 @@ curl http://localhost:12434/engines/llama.cpp/v1/chat/completions \
 若需要临时覆盖配置，可在启动 FastAPI 前导出环境变量：
 
 ```bash
-export SMARTMIND_PROVIDER=docker
-export SMARTMIND_BASE_URL=http://localhost:12434/engines/llama.cpp/v1/chat/completions
-export SMARTMIND_MODEL=ai/gemma3
+export MINDFLOW_PROVIDER=docker
+export MINDFLOW_BASE_URL=http://localhost:12434/engines/llama.cpp/v1/chat/completions
+export MINDFLOW_MODEL=ai/gemma3
 ```
 
 **OpenAI / 兼容服务（默认走 `/v1/responses`，如需旧版可把 base_url 改为 `/v1/chat/completions`）**
@@ -173,4 +173,4 @@ print(response.output_text)
 - [ ] PWA 打包与桌面安装
 - [ ] AI 生成子节点推荐
 
-欢迎 Issue / PR，一起把 SmartMind 打磨成更好用的 AI 笔记工具。🎉
+欢迎 Issue / PR，一起把 MindFlow 打磨成更好用的 AI 笔记工具。🎉

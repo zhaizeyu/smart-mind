@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)"
-PID_FILE="$DIR/.smartmind.pids"
+PID_FILE="$DIR/.mindflow.pids"
 BACKEND_PORT=8000
 FRONTEND_PORT=5173
 found_instance=0
@@ -63,9 +63,9 @@ stop_by_port "后端" "$BACKEND_PORT"
 stop_by_port "前端" "$FRONTEND_PORT"
 
 if [[ $found_instance -eq 0 ]]; then
-  echo "没有检测到需要停止的 SmartMind 进程。"
+  echo "没有检测到需要停止的 MindFlow 进程。"
   exit 0
 fi
 
 rm -f "$PID_FILE" 2>/dev/null || true
-echo "SmartMind 已全部停止。"
+echo "MindFlow 已全部停止。"

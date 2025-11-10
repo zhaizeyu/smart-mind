@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from services.ai_client import AIClient, get_ai_client
 
-logger = logging.getLogger("smartmind.ask")
+logger = logging.getLogger("mindflow.ask")
 router = APIRouter(prefix="/ask", tags=["ask"])
 
 

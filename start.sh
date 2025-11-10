@@ -6,7 +6,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
 fi
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PID_FILE="$DIR/.smartmind.pids"
+PID_FILE="$DIR/.mindflow.pids"
 LOG_DIR="$DIR/.logs"
 FRONT_LOG="$LOG_DIR/frontend.log"
 BACK_LOG="$LOG_DIR/backend.log"
@@ -22,7 +22,7 @@ timestamp() {
 }
 
 log() {
-  printf '[SmartMind %s] %s\n' "$(timestamp)" "$*" >&2
+  printf '[MindFlow %s] %s\n' "$(timestamp)" "$*" >&2
 }
 
 show_log_tail() {
@@ -151,7 +151,7 @@ PID
 log "启动成功！"
 cat <<INFO
 ──────────────────────────────────────
-SmartMind 已启动：
+MindFlow 已启动：
   ▸ 后端：${BACK_URL} （健康检查：${BACK_URL}/health）
     PID: ${BACK_PID}  日志：${BACK_LOG}
   ▸ 前端：${FRONT_URL}
