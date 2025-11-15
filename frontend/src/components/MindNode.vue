@@ -6,6 +6,7 @@ const props = defineProps<{
   node: MindNode;
   loading?: boolean;
   summarizing?: boolean;
+  generatingChildren?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -13,6 +14,7 @@ const emit = defineEmits<{
   (e: 'update:answer', value: string): void;
   (e: 'ask'): void;
   (e: 'summarize'): void;
+  (e: 'generate-children'): void;
   (e: 'delete'): void;
 }>();
 
@@ -35,6 +37,7 @@ watch(
 
 const disableAsk = computed(() => props.loading || props.summarizing || !draftQuestion.value.trim());
 const disableSummarize = computed(() => props.loading || props.summarizing);
+const disableGenerateChild = computed(() => props.loading || props.summarizing || props.generatingChildren);
 const disableSaveAnswer = computed(() => props.loading || props.summarizing || draftAnswer.value === (props.node.answer ?? ''));
 
 function handleSubmit() {
@@ -67,6 +70,9 @@ function handleSaveAnswer() {
       </button>
       <button class="secondary" type="button" :disabled="disableSummarize" @click="emit('summarize')">
         {{ summarizing ? '汇总中...' : '节点汇总' }}
+      </button>
+      <button class="secondary" type="button" :disabled="disableGenerateChild" @click="emit('generate-children')">
+        {{ generatingChildren ? '生成子节点中...' : 'AI 生成子节点' }}
       </button>
     </div>
 

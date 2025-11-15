@@ -27,6 +27,7 @@ class AISettings(BaseSettings):
     headers: Dict[str, str] = Field(default_factory=dict, description="附加 HTTP 请求头")
     timeout: float = Field(default=30.0)
     history_path: Path = Field(default=Path(__file__).resolve().parents[1] / "data" / "history.json")
+    answer_style: str = Field(default="你是一名简明扼要的助理，请用 2-3 句话直接回答用户问题。")
 
     model_config = SettingsConfigDict(env_prefix="MINDFLOW_", extra="allow")
 
@@ -44,15 +45,16 @@ class AIClient:
             self.history_path.write_text("[]", encoding="utf-8")
 
     async def ask(self, question: str) -> str:
+        styled_question = self._apply_answer_style(question)
         provider = self.settings.provider
         logger.info("Dispatch question to provider=%s", provider)
         try:
             if provider == "http" and self.settings.base_url:
-                return await self._request_custom_http(question)
+                return await self._request_custom_http(styled_question)
             if provider == "openai":
-                return await self._request_openai(question)
+                return await self._request_openai(styled_question)
             if provider == "docker":
-                return await self._request_docker_runner(question)
+                return await self._request_docker_runner(styled_question)
         except Exception as exc:  # noqa: BLE001
             logger.exception("Provider %s failed: %s", provider, exc)
             return self._fallback(question, error=str(exc))
@@ -190,6 +192,12 @@ class AIClient:
         payload.append(record)
         self.history_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         logger.debug("Persisted QA record, total=%s", len(payload))
+
+    def _apply_answer_style(self, question: str) -> str:
+        style = (self.settings.answer_style or "").strip()
+        if not style:
+            return question
+        return f"{style}\n\n问题：{question}"
 
 
 def get_ai_client() -> AIClient:

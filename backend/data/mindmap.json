@@ -1,0 +1,15 @@
+[
+  {
+    "id": "6f371820-d85d-4513-8be6-4f26790e1287",
+    "parentId": null,
+    "question": "输入一个中心问题",
+    "answer": null,
+    "children": [],
+    "position": {
+      "x": 80.0,
+      "y": 100.0
+    },
+    "createdAt": "2025-11-15T12:48:09.195Z",
+    "updatedAt": "2025-11-15T12:48:09.195Z"
+  }
+]

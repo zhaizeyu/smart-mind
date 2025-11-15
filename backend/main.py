@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routers import ask  # type: ignore[attr-defined]
 from routers import summary  # type: ignore[attr-defined]
+from routers import generate  # type: ignore[attr-defined]
+from routers import mindmap  # type: ignore[attr-defined]
 
 LOGGING_CONFIG = {
     "version": 1,
@@ -41,6 +43,8 @@ app.add_middleware(
 
 app.include_router(ask.router)
 app.include_router(summary.router)
+app.include_router(generate.router)
+app.include_router(mindmap.router)
 
 
 @app.on_event("startup")

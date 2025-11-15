@@ -19,6 +19,7 @@ DEFAULT_CONFIG = {
         "api_key": "",
         "model": "gpt-4o-mini",
         "headers": {},
+        "answer_style": "你是一名简明扼要的助理，请用 2-3 句话直接回答用户问题。",
     }
 }
 

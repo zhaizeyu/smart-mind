@@ -3,6 +3,7 @@ provider = "docker"
 base_url = "http://localhost:12434/engines/llama.cpp/v1/chat/completions"
 model = "ai/gemma3"
 timeout = 60  # 单位秒，可按模型加载速度自行调整
+answer_style = "简要回答；"
 
 
 

@@ -16,6 +16,11 @@ interface UpdateNodePayload {
 
 const defaultPosition: NodePosition = { x: 80, y: 80 };
 
+interface LocatedNode {
+  node: MindNode;
+  parent: MindNode | null;
+}
+
 function uid() {
   return crypto?.randomUUID?.() ?? `node-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
@@ -48,6 +53,15 @@ function removeNode(nodes: MindNode[], id: string): boolean {
   return false;
 }
 
+function hasDescendant(root: MindNode, targetId: string): boolean {
+  for (const child of root.children) {
+    if (child.id === targetId || hasDescendant(child, targetId)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export const useMindStore = defineStore('mind', {
   state: (): MindMapState => ({
     nodes: [],
@@ -60,10 +74,6 @@ export const useMindStore = defineStore('mind', {
     }
   },
   actions: {
-    setNodes(nodes: MindNode[]) {
-      this.nodes = nodes;
-      this.autoArrange();
-    },
     ensureRoot() {
       if (this.nodes.length === 0) {
         const root = createNode({ question: '输入一个中心问题', position: { x: 400, y: 200 } });
@@ -121,16 +131,45 @@ export const useMindStore = defineStore('mind', {
         this.ensureRoot();
       }
     },
-    findNodeById(id: string) {
-      const stack: MindNode[] = [...this.nodes];
+    findNodeById(id: string): LocatedNode | null {
+      const stack: LocatedNode[] = this.nodes.map(node => ({ node, parent: null }));
       while (stack.length) {
         const current = stack.pop()!;
-        if (current.id === id) {
-          return { node: current };
+        if (current.node.id === id) {
+          return current;
         }
-        stack.push(...current.children);
+        for (const child of current.node.children) {
+          stack.push({ node: child, parent: current.node });
+        }
       }
       return null;
+    },
+    reparentNode(id: string, newParentId: string | null) {
+      if (id === newParentId) return;
+      const target = this.findNodeById(id);
+      if (!target) return;
+      if (target.node.parentId === newParentId) return;
+      if (newParentId) {
+        const newParent = this.findNodeById(newParentId);
+        if (!newParent) return;
+        if (hasDescendant(target.node, newParentId)) {
+          return;
+        }
+      }
+      if (target.parent) {
+        target.parent.children = target.parent.children.filter(child => child.id !== id);
+      } else {
+        this.nodes = this.nodes.filter(node => node.id !== id);
+      }
+      target.node.parentId = newParentId;
+      target.node.updatedAt = new Date().toISOString();
+      if (newParentId) {
+        const newParent = this.findNodeById(newParentId);
+        newParent?.node.children.push(target.node);
+      } else {
+        this.nodes.push(target.node);
+      }
+      this.autoArrange();
     },
     autoArrange() {
       if (!this.nodes.length) return;

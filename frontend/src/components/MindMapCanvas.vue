@@ -13,6 +13,8 @@ const emit = defineEmits<{
   (e: 'select', id: string): void;
   (e: 'add-child', parentId: string): void;
   (e: 'delete-node', nodeId: string): void;
+  (e: 'move-node', payload: { id: string; position: { x: number; y: number } }): void;
+  (e: 'reparent-node', payload: { id: string; parentId: string }): void;
 }>();
 
 const expandedNodeId = ref<string | null>(null);
@@ -64,6 +66,57 @@ function handleDelete(event: KonvaEventObject<MouseEvent>, nodeId: string) {
   emit('delete-node', nodeId);
 }
 
+function handleDragEnd(event: KonvaEventObject<DragEvent>, node: MindNode) {
+  const { x, y } = event.target.position();
+  emit('move-node', { id: node.id, position: { x, y } });
+  const dropTarget = detectDropTarget(node, { x: x + NODE_WIDTH / 2, y: y + NODE_HEIGHT / 2 });
+  if (dropTarget && dropTarget.id !== node.parentId) {
+    emit('reparent-node', { id: node.id, parentId: dropTarget.id });
+  }
+}
+
+function detectDropTarget(node: MindNode, point: { x: number; y: number }): MindNode | null {
+  const draggedNode = node;
+  for (const candidate of flatNodes.value) {
+    if (candidate.id === draggedNode.id) continue;
+    if (isDescendant(draggedNode, candidate.id)) continue;
+    if (isOverlap(draggedNode, candidate)) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
+function isOverlap(source: MindNode, target: MindNode): boolean {
+  const sourceRect = {
+    left: source.position.x,
+    right: source.position.x + NODE_WIDTH,
+    top: source.position.y,
+    bottom: source.position.y + NODE_HEIGHT
+  };
+  const targetRect = {
+    left: target.position.x,
+    right: target.position.x + NODE_WIDTH,
+    top: target.position.y,
+    bottom: target.position.y + NODE_HEIGHT
+  };
+  return !(
+    sourceRect.right < targetRect.left ||
+    sourceRect.left > targetRect.right ||
+    sourceRect.bottom < targetRect.top ||
+    sourceRect.top > targetRect.bottom
+  );
+}
+
+function isDescendant(root: MindNode, targetId: string): boolean {
+  for (const child of root.children) {
+    if (child.id === targetId || isDescendant(child, targetId)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function openExpanded(event: KonvaEventObject<MouseEvent>, nodeId: string) {
   event.cancelBubble = true;
   expandedNodeId.value = nodeId;
@@ -87,7 +140,11 @@ const expandedNode = computed(() => flatNodes.value.find(node => node.id === exp
         />
 
         <template v-for="node in flatNodes" :key="node.id">
-          <v-group :config="{ x: node.position.x, y: node.position.y }" @click="emit('select', node.id)">
+          <v-group
+            :config="{ x: node.position.x, y: node.position.y, draggable: true }"
+            @click="emit('select', node.id)"
+            @dragend="event => handleDragEnd(event, node)"
+          >
             <v-rect
               :config="{
                 width: NODE_WIDTH,

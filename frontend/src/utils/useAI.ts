@@ -23,6 +23,16 @@ interface SummaryResponse {
   summary: string;
 }
 
+interface GenerateChildrenPayload {
+  topic: string;
+  answer: string;
+  count?: number;
+}
+
+interface GenerateChildrenResponse {
+  questions: { question: string }[];
+}
+
 const client = axios.create({
   baseURL: '/api'
 });
@@ -34,5 +44,10 @@ export async function askQuestion(payload: AskPayload): Promise<AskResponse> {
 
 export async function summarizeNode(payload: SummaryPayload): Promise<SummaryResponse> {
   const { data } = await client.post<SummaryResponse>('/summary', payload);
+  return data;
+}
+
+export async function generateChildQuestions(payload: GenerateChildrenPayload): Promise<GenerateChildrenResponse> {
+  const { data } = await client.post<GenerateChildrenResponse>('/generate', payload);
   return data;
 }

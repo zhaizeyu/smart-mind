@@ -3,13 +3,16 @@ import { computed, onMounted, ref, watch } from 'vue';
 import MindMapCanvas from './components/MindMapCanvas.vue';
 import MindNode from './components/MindNode.vue';
 import { useMindStore } from './stores/useMindStore';
-import { askQuestion, summarizeNode, type SummaryEntry } from './utils/useAI';
+import { askQuestion, summarizeNode, generateChildQuestions, type SummaryEntry } from './utils/useAI';
 import { clearMindMap, loadMindMap, saveMindMap } from './utils/db';
-import type { MindNode as MindNodeType } from './types/mind';
+import { fetchServerMindMap, persistServerMindMap } from './utils/serverStorage';
+import { NODE_HEIGHT, NODE_WIDTH } from './utils/layout';
+import type { MindNode as MindNodeType, NodePosition } from './types/mind';
 
 const store = useMindStore();
 const isAsking = ref(false);
 const isSummarizing = ref(false);
+const isGeneratingChildren = ref(false);
 const toast = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 
@@ -19,6 +22,11 @@ onMounted(async () => {
   const persisted = await loadMindMap();
   if (persisted?.length) {
     store.replaceAll(persisted);
+  } else {
+    const remote = await fetchServerMindMap();
+    if (remote?.length) {
+      store.replaceAll(remote);
+    }
   }
   store.ensureRoot();
 });
@@ -28,6 +36,7 @@ watch(
   nodes => {
     const snapshot = JSON.parse(JSON.stringify(nodes)) as MindNodeType[];
     saveMindMap(snapshot);
+    persistServerMindMap(snapshot);
   },
   { deep: true }
 );
@@ -126,6 +135,47 @@ async function resetMindMap() {
   store.replaceAll([]);
   store.ensureRoot();
 }
+
+function handleMoveNode(payload: { id: string; position: NodePosition }) {
+  store.moveNode(payload.id, payload.position);
+}
+
+function handleReparent(payload: { id: string; parentId: string }) {
+  store.reparentNode(payload.id, payload.parentId);
+}
+
+async function handleGenerateChildren() {
+  const node = selectedNode.value;
+  if (!node) return;
+  isGeneratingChildren.value = true;
+  try {
+    const { questions } = await generateChildQuestions({
+      topic: node.question,
+      answer: node.answer ?? '',
+      count: 2
+    });
+    if (!questions.length) {
+      toast.value = 'AI 未返回子问题';
+    } else {
+      questions.forEach((item, index) => {
+        store.addNode({
+          parentId: node.id,
+          question: item.question,
+          position: {
+            x: node.position.x + NODE_WIDTH + 80,
+            y: node.position.y + index * (NODE_HEIGHT + 40)
+          }
+        });
+      });
+      toast.value = `已创建 ${questions.length} 个子节点`;
+    }
+  } catch (error) {
+    toast.value = `生成子节点失败：${(error as Error).message}`;
+  } finally {
+    isGeneratingChildren.value = false;
+    setTimeout(() => (toast.value = null), 2000);
+  }
+}
 </script>
 
 <template>
@@ -154,6 +204,8 @@ async function resetMindMap() {
           @select="store.selectNode"
           @add-child="handleAddChild"
           @delete-node="store.removeNode"
+          @move-node="handleMoveNode"
+          @reparent-node="handleReparent"
         />
       </section>
       <section class="panel-area" v-if="selectedNode">
@@ -161,10 +213,12 @@ async function resetMindMap() {
           :node="selectedNode"
           :loading="isAsking"
           :summarizing="isSummarizing"
+          :generating-children="isGeneratingChildren"
           @update:question="value => store.updateNode(selectedNode.id, { question: value })"
           @update:answer="value => store.updateNode(selectedNode.id, { answer: value })"
           @ask="handleAsk"
           @summarize="handleSummarize"
+          @generate-children="handleGenerateChildren"
           @delete="() => store.removeNode(selectedNode.id)"
         />
       </section>
