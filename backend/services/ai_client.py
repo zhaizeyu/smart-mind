@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from pathlib import Path
+import os
 from typing import Any, Dict, Literal, Optional
 
 import httpx
@@ -38,7 +39,7 @@ logger = logging.getLogger(__name__)
 class AIClient:
     def __init__(self, settings: AISettings | None = None) -> None:
         config_overrides = load_ai_config()
-        self.settings = settings or AISettings(**config_overrides)
+        self.settings = settings or self._build_settings(config_overrides)
         self.history_path = self.settings.history_path
         self.history_path.parent.mkdir(parents=True, exist_ok=True)
         if not self.history_path.exists():
@@ -198,6 +199,17 @@ class AIClient:
         if not style:
             return question
         return f"{style}\n\n问题：{question}"
+
+    def _build_settings(self, config_overrides: dict[str, Any]) -> AISettings:
+        if config_overrides is None:
+            config_overrides = {}
+        data = dict(config_overrides)
+        prefix = AISettings.model_config.get("env_prefix", "")
+        for field_name in AISettings.model_fields:
+            env_name = f"{prefix}{field_name}".upper()
+            if env_name in os.environ:
+                data[field_name] = os.environ[env_name]
+        return AISettings(**data)
 
 
 def get_ai_client() -> AIClient:

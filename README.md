@@ -8,6 +8,7 @@
 - AI 双向协作：向模型提问、汇总节点答案、自动生成 2 个发散子问题
 - 双重持久化：前端数据存入 IndexedDB，后端同步 `backend/data/mindmap.json`
 - 一键脚本：`start.sh` / `stop.sh` 同时管理前后端
+- 容器部署：提供 Dockerfile 与 `scripts/build-image.sh`，方便打包成镜像
 - 可控回答风格：`answer_style` 提示词影响所有模型回复，默认“简要回答”
 
 ## 技术栈
@@ -40,6 +41,23 @@ cd ../backend && python3 -m venv .venv && source .venv/bin/activate && pip insta
 ```
 
 开发时也可以分别运行 `npm run dev` 和 `uvicorn main:app --reload`，前端已通过 Vite 代理把 `/api` 指向 `http://localhost:8000`。
+
+### Docker 打包
+
+```bash
+scripts/build-image.sh mindflow:latest
+docker run -p 8000:8000 mindflow:latest
+
+# 映射宿主机上的大模型（示例将 host.docker.internal 暴露给容器）
+docker run -p 8000:8000 \
+  --add-host=host.docker.internal:host-gateway \
+  -e MINDFLOW_PROVIDER=docker \
+  -e MINDFLOW_BASE_URL=http://host.docker.internal:12434/engines/llama.cpp/v1/chat/completions \
+  -e MINDFLOW_MODEL=ai/gemma3 \
+  mindflow:latest
+```
+
+启动后访问 `http://localhost:8000/` 即可加载前端，所有接口则位于 `/api/*`。
 
 ## 配置大模型
 
