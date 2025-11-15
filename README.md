@@ -55,6 +55,14 @@ docker run -p 8000:8000 \
   -e MINDFLOW_BASE_URL=http://host.docker.internal:12434/engines/llama.cpp/v1/chat/completions \
   -e MINDFLOW_MODEL=ai/gemma3 \
   mindflow:latest
+
+# 直接从 Docker Hub 启动（示例镜像：zhaizeyu/zzy/mindflow）
+docker run -p 8000:8000 \
+  --add-host=host.docker.internal:host-gateway \
+  -e MINDFLOW_PROVIDER=docker \
+  -e MINDFLOW_BASE_URL=http://host.docker.internal:12434/engines/llama.cpp/v1/chat/completions \
+  -e MINDFLOW_MODEL=ai/gemma3 \
+  zhaizeyu/zzy/mindflow:latest
 ```
 
 启动后访问 `http://localhost:8000/` 即可加载前端，所有接口则位于 `/api/*`。
